@@ -22,7 +22,8 @@ app = FastAPI(
     description="Free Use Bible API - Access Bible translations, commentaries, and datasets via JSON endpoints. All endpoints return JSON data served as static files.",
     version="1.8.0",
     docs_url="/docs",
-    redoc_url="/redoc",
+    redoc_url=None,  # We'll create a custom ReDoc endpoint
+    openapi_url="/openapi.json",
     root_path=ROOT_PATH,
     servers=[
         {"url": ROOT_PATH or "/", "description": "Current server"},
@@ -308,6 +309,33 @@ fetch('/api/BSB/GEN/1.json')
     """
     return HTMLResponse(content=html_content)
 
+@app.get("/redoc", response_class=HTMLResponse, include_in_schema=False)
+async def redoc_html():
+    """Custom ReDoc endpoint with explicit OpenAPI schema URL"""
+    openapi_url = f"{ROOT_PATH}/openapi.json" if ROOT_PATH else "/openapi.json"
+    redoc_html_content = f"""
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bible API - ReDoc</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <style>
+      body {{
+        margin: 0;
+        padding: 0;
+      }}
+    </style>
+  </head>
+  <body>
+    <redoc spec-url="{openapi_url}"></redoc>
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+  </body>
+</html>
+    """
+    return HTMLResponse(content=redoc_html_content)
+
 # API Endpoint Documentation
 # These endpoints document the static JSON API endpoints served by nginx
 
@@ -327,8 +355,11 @@ async def get_available_translations():
     - name: Full name of the translation
     - language: Language code
     - and other metadata
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return []  # This endpoint is served by nginx as a static file
 
 @app.get(
     "/api/{translation}/books.json",
@@ -348,8 +379,11 @@ async def get_translation_books(
     Returns an object containing:
     - translation: Translation metadata
     - books: Array of book objects with metadata
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return {}  # This endpoint is served by nginx as a static file
 
 @app.get(
     "/api/{translation}/{book}/{chapter}.json",
@@ -374,8 +408,11 @@ async def get_chapter(
     - book: Book metadata
     - chapter: Chapter number
     - verses: Array of verse objects
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return {}  # This endpoint is served by nginx as a static file
 
 @app.get(
     "/api/available-commentaries.json",
@@ -389,8 +426,11 @@ async def get_available_commentaries():
     Get a list of all available Bible commentaries.
     
     Returns an array of commentary objects with metadata.
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return []  # This endpoint is served by nginx as a static file
 
 @app.get(
     "/api/c/{commentary}/books.json",
@@ -408,8 +448,11 @@ async def get_commentary_books(
     - **commentary**: The commentary identifier
     
     Returns an object containing commentary and book metadata.
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return {}  # This endpoint is served by nginx as a static file
 
 @app.get(
     "/api/c/{commentary}/{book}/{chapter}.json",
@@ -429,8 +472,11 @@ async def get_commentary_chapter(
     - **commentary**: The commentary identifier
     - **book**: The book identifier
     - **chapter**: The chapter number
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return {}  # This endpoint is served by nginx as a static file
 
 @app.get(
     "/api/available-datasets.json",
@@ -444,8 +490,11 @@ async def get_available_datasets():
     Get a list of all available datasets (e.g., cross-references).
     
     Returns an array of dataset objects with metadata.
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return []  # This endpoint is served by nginx as a static file
 
 @app.get(
     "/api/d/{dataset}/books.json",
@@ -463,8 +512,11 @@ async def get_dataset_books(
     - **dataset**: The dataset identifier
     
     Returns an object containing dataset and book metadata.
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return {}  # This endpoint is served by nginx as a static file
 
 @app.get(
     "/api/d/{dataset}/{book}/{chapter}.json",
@@ -484,8 +536,11 @@ async def get_dataset_chapter(
     - **dataset**: The dataset identifier
     - **book**: The book identifier
     - **chapter**: The chapter number
+    
+    Note: This endpoint is actually served by nginx as a static JSON file.
+    This FastAPI endpoint exists only for OpenAPI documentation purposes.
     """
-    pass  # This endpoint is served by nginx as a static file
+    return {}  # This endpoint is served by nginx as a static file
 
 @app.get("/api/config", tags=["Configuration"])
 async def get_config():
