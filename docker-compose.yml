@@ -7,13 +7,14 @@ services:
     container_name: bible-api-generator
     volumes:
       # Mount local bible.db file (must exist in project root)
-      - ./bible.db:/app/db/bible.db:ro
+      # Mount directly to /app where WORKDIR is set
+      - ./bible.db:/app/bible.db:ro
       # Local directory for generated API files (accessible on host)
       - ./api:/app/api
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - NODE_OPTIONS=${NODE_OPTIONS:---max-old-space-size=4096}
-      - BIBLE_DB_PATH=/app/db/bible.db
+      - BIBLE_DB_PATH=/app/bible.db
       - API_OUTPUT_PATH=${API_OUTPUT_PATH:-/app/api}
       - API_OVERWRITE=${API_OVERWRITE:-false}
       - API_PRETTY_PRINT=${API_PRETTY_PRINT:-true}
@@ -29,13 +30,16 @@ services:
         pnpm install --frozen-lockfile &&
         echo "Building project..." &&
         pnpm run build &&
-        DB_PATH=$${BIBLE_DB_PATH:-/app/db/bible.db}
-        API_PATH=$${API_OUTPUT_PATH:-/app/api}
-        OVERWRITE_FLAG=$${API_OVERWRITE:-false}
-        PRETTY_FLAG=$${API_PRETTY_PRINT:-true}
-        TRANSLATIONS=$${API_TRANSLATIONS:-}
-        BATCH_SIZE=$${API_BATCH_SIZE:-10}
-        SKIP_GENERATION=$${SKIP_GENERATION:-false}
+        export DB_PATH=$${BIBLE_DB_PATH:-/app/bible.db} &&
+        export API_PATH=$${API_OUTPUT_PATH:-/app/api} &&
+        export OVERWRITE_FLAG=$${API_OVERWRITE:-false} &&
+        export PRETTY_FLAG=$${API_PRETTY_PRINT:-true} &&
+        export TRANSLATIONS=$${API_TRANSLATIONS:-} &&
+        export BATCH_SIZE=$${API_BATCH_SIZE:-10} &&
+        export SKIP_GENERATION=$${SKIP_GENERATION:-false} &&
+        echo "Checking database file at $$DB_PATH..." &&
+        ls -la $$(dirname $$DB_PATH) || true &&
+        ls -la $$DB_PATH || echo "Database file not found" &&
         
         # Skip generation if SKIP_GENERATION is set to true
         # This is useful when using an existing volume with pre-generated files
@@ -51,6 +55,8 @@ services:
         if [ ! -f "$$DB_PATH" ]; then
           echo "Error: Database file not found at $$DB_PATH";
           echo "Please ensure bible.db exists in the project root directory.";
+          echo "Checking mounted volumes:";
+          ls -la /app/db/ || echo "/app/db/ does not exist";
           exit 1;
         fi;
         
