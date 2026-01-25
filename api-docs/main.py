@@ -49,7 +49,7 @@ def load_config():
         "version": "1.0.0",
         "apiBase": "/api",
         "endpoints": {
-            "translations": "/api/available-translations.json",
+            "translations": "/api/available_translations.json",
             "commentaries": "/api/available_commentaries.json",
             "datasets": "/api/available_datasets.json"
         }
@@ -271,7 +271,7 @@ async def root(request: Request):
                 <h2>Example Usage</h2>
                 <div class="example">
                     <pre><code>// Get available translations
-fetch('/api/available-translations.json')
+fetch('/api/available_translations.json')
     .then(response => response.json())
     .then(data => console.log(data));
 
@@ -340,7 +340,7 @@ async def redoc_html():
 # These endpoints document the static JSON API endpoints served by nginx
 
 @app.get(
-    "/api/available-translations.json",
+    "/api/available_translations.json",
     response_model=List[Dict[str, Any]],
     summary="Get Available Translations",
     description="Returns a list of all available Bible translations with their metadata.",
