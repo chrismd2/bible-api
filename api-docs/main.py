@@ -50,8 +50,8 @@ def load_config():
         "apiBase": "/api",
         "endpoints": {
             "translations": "/api/available-translations.json",
-            "commentaries": "/api/available-commentaries.json",
-            "datasets": "/api/available-datasets.json"
+            "commentaries": "/api/available_commentaries.json",
+            "datasets": "/api/available_datasets.json"
         }
     }
 
@@ -415,7 +415,7 @@ async def get_chapter(
     return {}  # This endpoint is served by nginx as a static file
 
 @app.get(
-    "/api/available-commentaries.json",
+    "/api/available_commentaries.json",
     response_model=List[Dict[str, Any]],
     summary="Get Available Commentaries",
     description="Returns a list of all available Bible commentaries.",
@@ -479,7 +479,7 @@ async def get_commentary_chapter(
     return {}  # This endpoint is served by nginx as a static file
 
 @app.get(
-    "/api/available-datasets.json",
+    "/api/available_datasets.json",
     response_model=List[Dict[str, Any]],
     summary="Get Available Datasets",
     description="Returns a list of all available datasets.",
@@ -500,18 +500,21 @@ async def get_available_datasets():
     "/api/d/{dataset}/books.json",
     response_model=Dict[str, Any],
     summary="Get Books in Dataset",
-    description="Returns a list of books available in the specified dataset.",
+    description="Returns a list of books available in the specified dataset. Use 'open-cross-ref' for Bible cross-references.",
     tags=["Datasets"],
 )
 async def get_dataset_books(
-    dataset: str = Path(..., description="Dataset ID", example="crossref")
+    dataset: str = Path(..., description="Dataset ID (e.g., 'open-cross-ref' for cross-references)", example="open-cross-ref")
 ):
     """
     Get a list of books for a specific dataset.
     
-    - **dataset**: The dataset identifier
+    - **dataset**: The dataset identifier (e.g., "open-cross-ref" for Bible cross-references)
     
     Returns an object containing dataset and book metadata.
+    
+    For the "open-cross-ref" dataset, this returns information about available books
+    and their cross-reference data.
     
     Note: This endpoint is actually served by nginx as a static JSON file.
     This FastAPI endpoint exists only for OpenAPI documentation purposes.
@@ -522,20 +525,36 @@ async def get_dataset_books(
     "/api/d/{dataset}/{book}/{chapter}.json",
     response_model=Dict[str, Any],
     summary="Get Dataset Chapter",
-    description="Returns the dataset content for a specific chapter.",
+    description="Returns the dataset content for a specific chapter. Use 'open-cross-ref' dataset to get cross-references for Bible verses.",
     tags=["Datasets"],
 )
 async def get_dataset_chapter(
-    dataset: str = Path(..., description="Dataset ID", example="crossref"),
+    dataset: str = Path(..., description="Dataset ID (e.g., 'open-cross-ref' for cross-references)", example="open-cross-ref"),
     book: str = Path(..., description="Book ID", example="GEN"),
     chapter: int = Path(..., description="Chapter number", example=1, ge=1)
 ):
     """
     Get dataset content for a specific chapter.
     
-    - **dataset**: The dataset identifier
-    - **book**: The book identifier
+    - **dataset**: The dataset identifier (e.g., "open-cross-ref" for Bible cross-references)
+    - **book**: The book identifier (e.g., "GEN" for Genesis)
     - **chapter**: The chapter number
+    
+    For the "open-cross-ref" dataset, returns cross-reference data with:
+    - dataset: Dataset metadata
+    - book: Book metadata
+    - chapter: Chapter object containing:
+      - number: Chapter number
+      - content: Array of verse objects, each with:
+        - verse: Verse number
+        - references: Array of cross-reference objects with:
+          - book: Referenced book ID
+          - chapter: Referenced chapter number
+          - verse: Referenced verse number (or start verse)
+          - endVerse: Optional end verse for verse ranges
+          - score: Relevance score for the cross-reference
+    
+    Example: GET /api/d/open-cross-ref/GEN/1.json returns cross-references for Genesis 1.
     
     Note: This endpoint is actually served by nginx as a static JSON file.
     This FastAPI endpoint exists only for OpenAPI documentation purposes.
