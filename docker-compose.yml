@@ -38,7 +38,6 @@ services:
         export BATCH_SIZE=$${API_BATCH_SIZE:-10} &&
         export SKIP_GENERATION=$${SKIP_GENERATION:-false} &&
         echo "Checking database file at $$DB_PATH..." &&
-        
         # Skip generation if SKIP_GENERATION is set to true
         # This is useful when using an existing volume with pre-generated files
         if [ "$$SKIP_GENERATION" = "true" ]; then
@@ -56,14 +55,14 @@ services:
           echo "This usually means the bible.db file doesn't exist on the host.";
           echo "Docker created a directory instead when trying to mount the missing file.";
           echo "Please ensure bible.db exists as a file in the project root directory.";
-          echo 'To download: See DOCKER.md or run the db:clone command';
+          echo "To download: See DOCKER.md or run the db:clone command";
           exit 1;
         fi;
         
         if [ ! -f "$$DB_PATH" ]; then
           echo "Error: Database file not found at $$DB_PATH";
           echo "Please ensure bible.db exists in the project root directory.";
-          echo 'To download: See DOCKER.md or run the db:clone command';
+          echo "To download: See DOCKER.md or run the db:clone command";
           exit 1;
         fi;
         
@@ -97,7 +96,7 @@ services:
         pnpm exec node ./packages/helloao-cli/dist/cjs/cli.cjs --db "$$DB_PATH" upload-api-files "$$API_PATH" -- --batch-size "$$BATCH_SIZE" $$OVERWRITE_ARG $$PRETTY_ARG $$TRANSLATIONS_ARG &&
         echo "API files generated successfully!" &&
         mkdir -p "$$API_PATH/api" &&
-        echo "{\"version\":\"1.0.0\",\"apiBase\":\"/api\",\"endpoints\":{\"translations\":\"/api/available_translations.json\",\"commentaries\":\"/api/available_commentaries.json\",\"datasets\":\"/api/available_datasets.json\"}}" > "$$API_PATH/api/config.json" &&
+        printf '{"version":"1.0.0","apiBase":"/api","endpoints":{"translations":"/api/available_translations.json","commentaries":"/api/available_commentaries.json","datasets":"/api/available_datasets.json"}}' > "$$API_PATH/api/config.json" &&
         echo "Created config.json at $$API_PATH/api/config.json" &&
         echo "Generated files count: $$(find \"$$API_PATH\" -type f -name \"*.json\" | wc -l)" &&
         echo "Sample files:" &&
