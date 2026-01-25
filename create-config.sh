@@ -8,9 +8,9 @@ cat > "${API_PATH}/api/config.json" <<EOF
   "version": "1.0.0",
   "apiBase": "/api",
   "endpoints": {
-    "translations": "/api/available-translations.json",
-    "commentaries": "/api/available-commentaries.json",
-    "datasets": "/api/available-datasets.json"
+    "translations": "/api/available_translations.json",
+    "commentaries": "/api/available_commentaries.json",
+    "datasets": "/api/available_datasets.json"
   }
 }
 EOF

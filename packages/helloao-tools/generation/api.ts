@@ -23,7 +23,7 @@ import { DatasetOutput } from './dataset.js';
 export interface ApiOutput {
     /**
      * The list of available translations.
-     * This maps to the /api/available-translations.json endpoint.
+     * This maps to the /api/available_translations.json endpoint.
      */
     availableTranslations: ApiAvailableTranslations;
 
@@ -50,7 +50,7 @@ export interface ApiOutput {
 
     /**
      * The list of available commentaries.
-     * This maps to the /api/available-commentaries.json endpoint.
+     * This maps to the /api/available_commentaries.json endpoint.
      */
     availableCommentaries: ApiAvailableCommentaries;
 
@@ -82,7 +82,7 @@ export interface ApiOutput {
 
     /**
      * The list of available datasets.
-     * This maps to the /api/available-datasets.json endpoint.
+     * This maps to the /api/available_datasets.json endpoint.
      */
     availableDatasets?: ApiAvailableDatasets;
 
@@ -113,7 +113,7 @@ export interface ApiOutput {
 
 /**
  * The list of available translations.
- * Maps to the /api/available-translations.json endpoint.
+ * Maps to the /api/available_translations.json endpoint.
  */
 export interface ApiAvailableTranslations {
     /**
@@ -124,7 +124,7 @@ export interface ApiAvailableTranslations {
 
 /**
  * The list of available commentaries.
- * Maps to the /api/available-commentaries.json endpoint.
+ * Maps to the /api/available_commentaries.json endpoint.
  */
 export interface ApiAvailableCommentaries {
     /**
@@ -135,7 +135,7 @@ export interface ApiAvailableCommentaries {
 
 /**
  * The list of available datasets.
- * Maps to the /api/available-datasets.json endpoint.
+ * Maps to the /api/available_datasets.json endpoint.
  */
 export interface ApiAvailableDatasets {
     datasets: ApiDataset[];
