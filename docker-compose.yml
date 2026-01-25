@@ -38,8 +38,6 @@ services:
         export BATCH_SIZE=$${API_BATCH_SIZE:-10} &&
         export SKIP_GENERATION=$${SKIP_GENERATION:-false} &&
         echo "Checking database file at $$DB_PATH..." &&
-        ls -la $$(dirname $$DB_PATH) || true &&
-        ls -la $$DB_PATH || echo "Database file not found" &&
         
         # Skip generation if SKIP_GENERATION is set to true
         # This is useful when using an existing volume with pre-generated files
@@ -52,11 +50,21 @@ services:
           exit 0;
         fi;
         
+        # Check if DB_PATH exists and is a file (not a directory)
+        if [ -d "$$DB_PATH" ]; then
+          echo "Error: $$DB_PATH is a directory, not a file!";
+          echo "This usually means the bible.db file doesn't exist on the host.";
+          echo "Docker created a directory instead when trying to mount the missing file.";
+          echo "";
+          echo "Please ensure bible.db exists as a file in the project root directory.";
+          echo "You can download it with: docker-compose run --rm bible-api-generator sh -c \"pnpm run db:clone\"";
+          exit 1;
+        fi;
+        
         if [ ! -f "$$DB_PATH" ]; then
           echo "Error: Database file not found at $$DB_PATH";
           echo "Please ensure bible.db exists in the project root directory.";
-          echo "Checking mounted volumes:";
-          ls -la /app/db/ || echo "/app/db/ does not exist";
+          echo "You can download it with: docker-compose run --rm bible-api-generator sh -c \"pnpm run db:clone\"";
           exit 1;
         fi;
         
