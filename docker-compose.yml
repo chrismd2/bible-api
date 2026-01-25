@@ -127,7 +127,7 @@ services:
       - bible-api-network
     restart: unless-stopped
 
-volumes:
+# volumes:
   # api-files volume removed - using local ./api directory instead
 
 networks:
