@@ -24,8 +24,10 @@ services:
     # Command to generate API files
     # Uses the local bible.db file mounted as a volume
     # Only generates if files don't exist or if forced to regenerate
-    command: >
-      sh -c '
+    command:
+      - sh
+      - -c
+      - |
         echo "Installing dependencies..." &&
         pnpm install --frozen-lockfile &&
         echo "Building project..." &&
@@ -102,7 +104,6 @@ services:
         echo "Sample files:" &&
         find "$$API_PATH" -type f -name "*.json" | head -5 &&
         touch "$$API_PATH/.ready"
-      '
     restart: "no"
     networks:
       - bible-api-network
